@@ -1,0 +1,134 @@
+\documentclass[fleqn,a4paper,11pt]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+
+\begin{document}
+
+\noindent \textbf{Canonical Correlation Analysis} \\
+
+
+\noindent Consider a multivariate random vector of the form $(x, y)$. Suppose we
+are given a sample of instances $S = ((x_{1}, y_{1}), . . . , (x_{n}, y_n))$ of $(x, y)$. Let $S_{x}$ denote $(x_{1},..., x_{n})$ and similarly $S_{y}$ denote $(y_1,..., y_	n)$. We can consider
+defining a new coordinate for $x$ by choosing a direction $w_x$ and projecting $x$ onto that direction,
+\begin{equation*}
+x \rightarrow \langle w_x, x \rangle. 
+\end{equation*}
+
+\noindent If we do the same for $y$ by choosing a direction $w_y$, we obtain a sample of the new $x$ coordinate. Let
+\begin{equation*}
+S_{x,w_x} = ( \langle w_x, x_1 \rangle ,...,\langle w_x, x_n \rangle),
+\end{equation*}
+
+\noindent with the  corresponding values of the new $y$ coordinate being
+\begin{equation*}
+S_{y,w_y} = ( \langle w_y, y_1 \rangle ,...,\langle w_y, y_n \rangle),
+\end{equation*}
+
+\noindent The first stage of canonical correlation is to choose $w_x$ and $w_y$ to maximize
+the correlation between the two vectors. In other words, the function’s result
+to be maximized is
+\begin{align*}
+\rho &= \underset{w_x,w_y}{\text{max}}\:corr(S_xw_x, S_yw_y) \\
+&= \underset{w_x,w_y}{\text{max}} \frac{\langle S_xw_x,S_yw_y \rangle}{||S_xw_x||\:||S_yw_y||}
+\end{align*}
+\noindent If we use $\mathbb{\hat E} [f(x, y)]$ to denote the empirical expectation of the function
+$f(x, y)$, where
+\begin{equation*}
+\mathbb{\hat E} [f(x, y)] = \frac{1}{m}{\sum \limits_{i=1}^m f(x_i, y_i)},
+\end{equation*}
+we can rewrite the correlation expression as
+\begin{align*}
+\rho &=\underset{w_x,w_y}{\text{max}} \frac{\mathbb{\hat E}[\langle w_x,x \rangle \langle w_y,y \rangle ]	}{\sqrt{\mathbb{\hat E}[\langle w_x,x \rangle ^2] \mathbb{\hat E}[\langle w_y,y \rangle  ^2]}} \\
+&=\underset{w_x,w_y}{\text{max}} \frac{\mathbb{\hat E}[w_{x}^{'}xy^{'}w_y]}{\sqrt{\mathbb{\hat E}[w_{x}^{'}xx^{'}w_x] {\mathbb{\hat E} [w_{y}^{'}yy^{'}w_y] }}}
+\end{align*}
+It follows that
+\begin{equation*}
+\rho =\underset{w_x,w_y}{\text{max}} \frac{w_{x}^{'} \mathbb{\hat E}[w_{x}^{'}xy^{'}]w_y}{\sqrt{w_x^{'}\mathbb{\hat E}[xx^{'}]w_x w_{y}^{'}{\mathbb{\hat E} [yy^{'}]w_y }}}
+\end{equation*}
+Now observe that the covariance matrix of $(x, y)$ is
+\begin{equation}
+\text{C}(x,y) = \mathbb{\hat E}\Bigg[\Bigg(
+\begin{matrix}
+x \\
+y
+\end{matrix}
+\Bigg)\Bigg(
+\begin{matrix}
+x \\
+y
+\end{matrix} \Bigg)^{'}\Bigg] =\; \Bigg[
+\begin{matrix}
+C_{xx} & C_{xy} \\
+C_{yx} & C_{yy}
+\end{matrix} \Bigg] = \;C
+\end{equation}
+\noindent The total covariance matrix $\text{C}$ is a block matrix where the within-sets covariance
+matrices are $\text{C}_{xx}$ and $\text{C}_{yy}$ and the between-sets covariance matrices
+are $\text{C}_{xy} = \text{C}_{yx}^{'}$
+, although equation (1) is the covariance matrix only in the
+zero-mean case.\\
+Hence, we can rewrite the function $\rho$ as
+\begin{equation}
+\rho =\underset{w_x,w_y}{\text{max}} \frac{w_{x}^{'} C_{xy} w_y}{\sqrt{w_x^{'}C_{xx} w_x w_{y}^{'}{C_{yy} w_y }}}
+\end{equation}
+\noindent The maximum canonical correlation is the maximum of $\rho$ with respect to
+$w_x$ and $w_y$ \\.
+
+\noindent \textbf{Algorithm}\\
+
+\noindent In this section, we give an overview of the CCA algorithms
+where we formulate the optimization problem as a standard eigenproblem.
+
+Observe that the solution of equation
+(2) is not affected by rescaling $w_x$ or $w_y$ either together or independently,
+so that, for example, replacing $w_x$ by $\alpha w_x$ gives the quotient
+\begin{equation*}
+\frac{\alpha w_x^{'}C_{xy} w_y }{\sqrt{\alpha^{2}w_x^{'}C_{xx} w_x w_y^{'}C_{yy} w_y}} =
+\frac{ w_x^{'}C_{xy} w_y }{\sqrt{w_x^{'}C_{xx} w_x w_y^{'}C_{yy} w_y}}
+\end{equation*}
+\noindent Since the choice of rescaling is therefore arbitrary, the CCA optimization problem formulated in equation (2) is equivalent to maximizing the numerator subject to
+\begin{align*}
+w_x^{'}C_{xx} w_x = 1 \\
+w_y^{'}C_{yy} w_y = 1 
+\end{align*}
+The corresponding Lagrangian is
+\begin{equation*}
+L(\lambda,w_x,w_y) = w_x^{'} C_{xx} w_y - \frac{\lambda_x}{2}(w_x^{'}C_{xx}w_x-1)- \frac{\lambda_y}{2}(w_y^{'}C_{yy}w_y-1)
+\end{equation*}
+Taking derivatives in respect to $w_x$ and $w_y$, we obtain
+
+\begin{align}
+\frac{\partial L}{\partial w_x} &= C_{xy}w_y - \lambda_x C_{xx}w_x = 0 \\
+\frac{\partial L}{\partial w_y} &= C_{yx}w_x - \lambda_y C_{yy}w_y = 0
+\end{align}
+\noindent Subtracting $w_y^{'}$ times the second equation from $w_x^{'}$ times the first, we have
+\begin{align*}
+0 &= w_x^{'}C_{xy}w_y - w_x^{'}\lambda_x C_{xx}w_x - w_y^{'}C_{yx}w_x 	+ w_y^{'}\lambda_y C_{yy}w_y \\
+&= \lambda_y w_y^{'} C_{yy} w_y - \lambda_x w_x^{'} C_{xx} w_x 
+\end{align*}
+\noindent which together with the constraints implies that $\lambda_y−\lambda_x = 0$, let$ \lambda = \lambda_x = \lambda_y$.
+Assuming $C_{yy}$ is invertible, we have
+\begin{equation}
+ w_y = \frac{C_{yy}^{-1}C_{yx}w_x}{\lambda}
+\end{equation}
+and so substituting in equation (3) gives
+\begin{equation}
+C_{xy}C_{yy}^{-1}C_{yx}w_x = \lambda^{2} C_{xx} w_x
+\end{equation}
+We are left with a generalized eigenproblem of the form $Ax = \lambda Bx$. We can therefore find the coordinate system that optimizes the correlation between corresponding coordinates by first solving for the generalized eigenvectors of equation (6) to obtain the sequence of $w_x$s and then using equation (5) to find the corresponding $w_y$s. \\
+\indent If $C_{xx}$ is invertible, we are able to formulate equation (6) as a standard eigenproblem of the form $B^{-1} Ax = \lambda x$, although to ensure a symmetric standard eigenproblem, we do the following. As the covariance matrices $C_{xx}$ and $C_{yy}$ are symmetric positive definite, we are able to decompose them
+using a complete Cholesky decomposition,
+\begin{equation*}
+C_{xx}  = R_{xx}.R_{xx}^{'}
+\end{equation*}
+where $R_{xx}$ is a lower triangular matrix. If we let $u_x = R_{xx}^{'}.w_x$, we are able
+to rewrite equation (6) as follows:
+\begin{align*}
+C_{xy}C_{yy}^{-1}C_{yx} R_{xx}^{-1'} u_x &= \lambda^{2} R_{xx} u_x \\
+R_{xx}^{-1} C_{xy}C_{yy}^{-1}C_{yx} R_{xx}^{-1'} u_x &= \lambda^{2}  u_x
+\end{align*}
+We are therefore left with a symmetric standard eigenproblem of the form
+$Ax = \lambda x$.
+\end{document}
